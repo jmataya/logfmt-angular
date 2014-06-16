@@ -24,9 +24,17 @@
           var str = "timestamp=" + this.getCurrentTimestamp();
           for(var key in json) {
             var jsonValue = json[key];
-            if (jsonValue.indexOf(' ') != -1) {
-              jsonValue = '\"' + jsonValue + '\"';
+            if (jsonValue) {
+              if (typeof jsonValue != 'string') {
+                jsonValue = jsonValue.toString();
+              }
+              if (jsonValue.indexOf(' ') != -1) {
+                jsonValue = '\"' + jsonValue + '\"';
+              }
+            } else {
+              jsonValue = '\"\"';
             }
+
             str += " " + key + "=" + jsonValue;
           }
 

@@ -35,5 +35,19 @@ describe("LogFmt", function() {
       LogFmt.log({message: "Test message"});
       expect(console.log).toHaveBeenCalledWith("timestamp=14-5-2014-00:00:00 message=\"Test message\"");
     });
+
+    it("should log correctly if a value is a number", function() {
+      LogFmt.getCurrentTimestamp = jasmine.createSpy("getCurrentTimestamp() spy").andReturn("14-5-2014-00:00:00");
+      spyOn(console, "log");
+      LogFmt.log({message: "Test", id: 1});
+      expect(console.log).toHaveBeenCalledWith("timestamp=14-5-2014-00:00:00 message=Test id=1");
+    });
+
+    it("should log an empty string if a parameter is undefined", function() {
+      LogFmt.getCurrentTimestamp = jasmine.createSpy("getCurrentTimestamp() spy").andReturn("14-5-2014-00:00:00");
+      spyOn(console, "log");
+      LogFmt.log({message: undefined});
+      expect(console.log).toHaveBeenCalledWith("timestamp=14-5-2014-00:00:00 message=\"\"");
+    });
   })
 });

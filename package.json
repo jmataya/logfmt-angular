@@ -1,7 +1,7 @@
 {
   "name": "logfmt-angular",
   "description": "Implementation of logfmt in AngularJS",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./src/logfmt-angular.js",
   "homepage": "https://github.com/jmataya/logfmt-angular",
   "author": "Jeff Mataya <jeff.mataya@gmail.com>",

@@ -1,6 +1,6 @@
 /**
  * Implementation of logfmt in AngularJS
- * @version v0.0.0 - 2014-06-15
+ * @version v0.0.1 - 2014-06-16
  * @link https://github.com/jmataya/logfmt-angular
  * @author Jeff Mataya <jeff.mataya@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -30,9 +30,17 @@
           var str = "timestamp=" + this.getCurrentTimestamp();
           for(var key in json) {
             var jsonValue = json[key];
-            if (jsonValue.indexOf(' ') != -1) {
-              jsonValue = '\"' + jsonValue + '\"';
+            if (jsonValue) {
+              if (typeof jsonValue != 'string') {
+                jsonValue = jsonValue.toString();
+              }
+              if (jsonValue.indexOf(' ') != -1) {
+                jsonValue = '\"' + jsonValue + '\"';
+              }
+            } else {
+              jsonValue = '\"\"';
             }
+
             str += " " + key + "=" + jsonValue;
           }
 
