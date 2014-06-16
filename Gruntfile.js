@@ -1,50 +1,3 @@
-// 'use strict';
-//
-// module.exports = function(grunt) {
-//   var modRewrite = require('connect-modrewrite');
-//
-//   grunt.initConfig({
-//     connect: {
-//       options: {
-//         port: 5556,
-//         hostname: 'localhost',
-//         debug: true,
-//         livereload: 35729,
-//         middleware: function(connect, options) {
-//           var middlewares = [];
-//           var directory = options.directory ||
-//                           options.base[options.base.length - 1];
-//
-//           middlewares.push(modRewrite([
-//             '^/logs/*$ index.html [L]'
-//           ]));
-//
-//           return middlewares;
-//         }
-//       },
-//       livereload: {
-//         options: {
-//           open: false,
-//           port: 5556,
-//           base: ['.']
-//         }
-//       }
-//     },
-//     watch: {
-//       livereload: {
-//         files: [
-//           'index.html'
-//         ]
-//       }
-//     }
-//   });
-//
-//   grunt.loadNpmTasks('grunt-contrib-connect');
-//   grunt.loadNpmTasks('grunt-contrib-watch');
-//
-//   grunt.registerTask('serve', ['connect:livereload', 'watch']);
-// }
-
 'use strict';
 
 module.exports = function (grunt) {
@@ -52,6 +5,42 @@ module.exports = function (grunt) {
   var modRewrite = require('connect-modrewrite');
 
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    meta: {
+      banner: [
+        '/**',
+        ' * <%= pkg.description %>',
+        ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>',
+        ' * @link <%= pkg.homepage %>',
+        ' * @author <%= pkg.author %>',
+        ' * @license MIT License, http://www.opensource.org/licenses/MIT',
+        ' */'
+      ].join('\n')
+    },
+    dirs: {
+      dest: 'dist'
+    },
+    concat: {
+      options: {
+        banner: '<%= meta.banner %>'
+      },
+      dist: {
+        src: ['src/*.js'],
+        dest: '<%= dirs.dest %>/<%= pkg.name %>.js'
+      }
+    },
+    zip: {
+      '<%= dirs.dest %>/logfmt-angular.zip': ['<%= dirs.dest %>/<%= pkg.name %>.js', '<%= dirs.dest %>/<%= pkg.name %>.min.js']
+    },
+    uglify: {
+      options: {
+        banner: '<%= meta.banner %>'
+      },
+      dist: {
+        src: ['<%= concat.dist.dest %>'],
+        dest: '<%= dirs.dest %>/<%= pkg.name %>.min.js'
+      }
+    },
     watch: {
       gruntfile: {
         files: ['Gruntfile.js']
@@ -63,7 +52,6 @@ module.exports = function (grunt) {
         files: ['index.html']
       },
     },
-
     connect: {
       options: {
         port: 7000,
@@ -105,7 +93,6 @@ module.exports = function (grunt) {
         }
       },
     },
-
     karma: {
       options: {
         configFile: 'karma.conf.js'
@@ -114,10 +101,21 @@ module.exports = function (grunt) {
         singleRun: true,
         autoWatch: false
       }
+    },
+    changelog: {
+      options: {
+        dest: 'CHANGELOG.md'
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-zip');
+  grunt.loadNpmTasks('grunt-conventional-changelog');
+
+  grunt.registerTask('build', ['karma:build', 'concat', 'uglify', 'zip']);
 
   grunt.registerTask('serve', function (target) {
     grunt.task.run([
@@ -130,6 +128,27 @@ module.exports = function (grunt) {
     'karma:build'
   ]);
 
-  grunt.registerTask('default', [
-  ]);
+  grunt.registerTask('default', ['build']);
+
+  // Provides the bump task.
+  grunt.registerTask('bump', 'Increment version number', function() {
+    var versionType = grunt.option('type');
+    function bumpVersion(version, versionType) {
+      var type = {patch: 2, minor: 1, major: 0},
+          parts = version.split('.'),
+          idx = type[versionType || 'patch'];
+      parts[idx] = parseInt(parts[idx], 10) + 1;
+      while(++idx < parts.length) { parts[idx] = 0; }
+      return parts.join('.');
+    }
+    var version;
+    function updateFile(file) {
+      var json = grunt.file.readJSON(file);
+      version = json.version = bumpVersion(json.version, versionType || 'patch');
+      grunt.file.write(file, JSON.stringify(json, null, '  '));
+    }
+    updateFile('package.json');
+    updateFile('bower.json');
+    grunt.log.ok('Version bumped to ' + version);
+  });
 };
