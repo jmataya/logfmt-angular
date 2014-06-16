@@ -27,4 +27,13 @@ describe("LogFmt", function() {
       expect(console.log).toHaveBeenCalledWith("timestamp=14-5-2014-00:00:00 message=Test");
     });
   });
+
+  describe("Advanced key-value logging to console", function() {
+    it("should log correctly if a message has a space", function() {
+      LogFmt.getCurrentTimestamp = jasmine.createSpy("getCurrentTimestamp() spy").andReturn("14-5-2014-00:00:00");
+      spyOn(console, "log");
+      LogFmt.log({message: "Test message"});
+      expect(console.log).toHaveBeenCalledWith("timestamp=14-5-2014-00:00:00 message=\"Test message\"");
+    });
+  })
 });
