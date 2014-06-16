@@ -23,7 +23,11 @@
         this.log = function(json) {
           var str = "timestamp=" + this.getCurrentTimestamp();
           for(var key in json) {
-            str += " " + key + "=" + json[key];
+            var jsonValue = json[key];
+            if (jsonValue.indexOf(' ') != -1) {
+              jsonValue = '\"' + jsonValue + '\"';
+            }
+            str += " " + key + "=" + jsonValue;
           }
 
           if (useLocalStorage) {
