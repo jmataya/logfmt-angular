@@ -95,7 +95,6 @@ module.exports = function (grunt) {
           return middlewares;
         }
       },
-
       livereload: {
         options: {
           open: false,
@@ -105,9 +104,20 @@ module.exports = function (grunt) {
           ]
         }
       },
+    },
+
+    karma: {
+      options: {
+        configFile: 'karma.conf.js'
+      },
+      build: {
+        singleRun: true,
+        autoWatch: false
+      }
     }
   });
 
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('serve', function (target) {
     grunt.task.run([
@@ -115,6 +125,10 @@ module.exports = function (grunt) {
       'watch'
     ]);
   });
+
+  grunt.registerTask('test', [
+    'karma:build'
+  ]);
 
   grunt.registerTask('default', [
   ]);

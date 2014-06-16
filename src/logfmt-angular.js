@@ -21,14 +21,7 @@
     this.$get = [function logFmtFactory() {
       return new function() {
         this.log = function(json) {
-          var currentDate = new Date();
-          var timestamp = currentDate.getDate() + "-" +
-            (currentDate.getMonth() + 1) + "-" +
-            currentDate.getFullYear() + "-" +
-            currentDate.getHours() + ":" +
-            currentDate.getMinutes() + ":" +
-            currentDate.getSeconds();
-          var str = "timestamp=" + timestamp;
+          var str = "timestamp=" + this.getCurrentTimestamp();
           for(var key in json) {
             str += " " + key + "=" + json[key];
           }
@@ -45,9 +38,19 @@
           }
         };
 
+        this.getCurrentTimestamp = function() {
+          var currentDate = new Date();
+          return currentDate.getDate() + "-" +
+            (currentDate.getMonth() + 1) + "-" +
+            currentDate.getFullYear() + "-" +
+            currentDate.getHours() + ":" +
+            currentDate.getMinutes() + ":" +
+            currentDate.getSeconds();
+        };
+
         this.getLogs = function() {
           return localStorage["logfmt"];
-        }
+        };
       }
     }];
   });
