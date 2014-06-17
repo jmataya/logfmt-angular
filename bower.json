@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "angular": ">= 1.2.18",
-    "angular-ui-router": ">= 0.2.10",
-    "angular-mocks": ">= 1.2.18"
+    "angular-ui-router": ">= 0.2.x",
+    "angular-mocks": ">= 1.2.x"
   }
 }
