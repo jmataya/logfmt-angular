@@ -1,6 +1,6 @@
 /**
  * Implementation of logfmt in AngularJS
- * @version v0.0.1 - 2014-06-16
+ * @version v0.0.2 - 2014-06-16
  * @link https://github.com/jmataya/logfmt-angular
  * @author Jeff Mataya <jeff.mataya@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
